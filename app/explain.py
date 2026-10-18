@@ -34,14 +34,15 @@ MODEL_PATH = _granite_path()
 _CUSTOMER_HEAD = """You are a calm banking assistant. Explain the pause in one plain sentence an older person can act on.
 
 Transfer:
-$85, online, 14:00, usual shop, matches normal spending
-Risk 0.10 (low)
-Message: This transfer looks normal. It will go through.
+$340, online, 01:00, new recipient, two transfers in ten minutes
+Risk 0.62 (needs confirmation)
+Message: We paused this payment because it is larger than usual and goes to someone new. Please check with your family before it is sent.
 
 Transfer:
 $2,400, online, 02:00, first time to this recipient, six transfers in four minutes
-Risk 0.78 (needs confirmation)
-Message:"""
+Risk 0.96 (high)
+Message: We stopped this payment. Six transfers went out in four minutes and this one is far larger than usual. Please call us before sending any money.
+"""
 
 # ---------------------------------------------------------------------------
 # ② 面向家属的通知
@@ -49,14 +50,15 @@ Message:"""
 _GUARDIAN_HEAD = """You are a bank alerting a family member about a paused transfer.
 
 Transfer:
-$60, chip, 10:00, usual shop
-Risk 0.12 (low)
-Alert: None needed.
+$340, online, 01:00, new recipient
+Risk 0.62 (needs confirmation)
+Alert: A $340 transfer from your parent was paused. Please call them before it is released.
 
 Transfer:
 $2,400, online, 02:00, first time to this recipient, six transfers in four minutes
-Risk 0.78 (needs confirmation)
-Alert:"""
+Risk 0.96 (high)
+Alert: A $2,400 transfer from your parent was stopped. Please call them now.
+"""
 
 
 def _describe(txn, result):
@@ -76,6 +78,32 @@ def _describe(txn, result):
     if "R05" in codes:
         bits.append("after a failed attempt")
     return ", ".join(bits)
+
+
+# 350M 模型会直接抄示例。生成结果必须和决策自洽，否则用模板兜底，
+# 绝不能让界面上出现「BLOCK：这笔转账看起来正常，会放行」这种矛盾。
+_REASSURING = ("normal", "go through", "goes through", "nothing unusual",
+               "no action", "usual payment", "looks fine")
+
+_FALLBACK = {
+    "CONFIRM": ("We paused this payment because it is larger than usual or goes to "
+                "someone new. Please check with your family before it is sent.",
+                "A transfer from your parent was paused. Please call them before it is released."),
+    "BLOCK": ("We stopped this payment. It is far larger than usual, and the recent "
+              "transfers on this account are unusual. Please call us before sending any money.",
+              "A transfer from your parent was stopped. Please call them now."),
+}
+
+
+def _consistent(text, decision):
+    """文案是否与决策一致：不能在被拦截时告诉用户没事。"""
+    if not text or len(text.strip()) < 12:
+        return False
+    low = text.lower()
+    if decision in ("CONFIRM", "BLOCK"):
+        if any(w in low for w in _REASSURING):
+            return False
+    return True
 
 
 def build_customer_prompt(txn, result):
@@ -134,10 +162,18 @@ class Explainer:
             return {"customer": "(explainer not ready)", "guardian": "", "ms": 0, "tokens": 0}
 
         t0 = time.time()
+        decision = result.get("decision", "CONFIRM")
+        fb_c, fb_g = _FALLBACK.get(decision, ("", ""))
+
         customer, t1 = self._gen(build_customer_prompt(txn, result), 44)
+        if not _consistent(customer, decision):
+            customer = fb_c
+
         guardian, t2 = ("", 0)
         if result.get("guardian_notified"):
             guardian, t2 = self._gen(build_guardian_prompt(txn, result), 40)
+            if not _consistent(guardian, decision):
+                guardian = fb_g
         ms = (time.time() - t0) * 1000
 
         with self._stats_lock:
