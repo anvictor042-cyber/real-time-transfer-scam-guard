@@ -12,5 +12,6 @@ SUBMIT.md
 __pycache__/
 models.bak.*
 preview*/
+proof.sh
 push_via_api.py
 venv/

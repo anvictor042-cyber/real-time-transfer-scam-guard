@@ -74,9 +74,27 @@
 
 **动作：`⌘ + Tab` 切到终端**
 
+终端里**已经显示好**一张系统信息卡（`./proof.sh` 的输出），不用现敲命令：
+
+```
+   architecture       s390x
+   vendor             IBM/S390
+   machine type       9175
+   byte order         Big Endian
+   cores              3
+   memory             7.8Gi
+   AI accelerator     present (NNPA)
+   container          scam-guard  Up (healthy)
+   ──────────────────────────────────
+   uname -m  ->  s390x        (not x86)
+```
+
 > This is s390x, a real IBM Z machine. Three cores, and an AI accelerator built into the processor. That is why the decision stays fast.
 
-*(终端里已经显示 `s390x` 和 `3`)*
+> 💡 **想让它现场重新跑一遍**：先按 **↑**，再按 **回车**。
+> 不用敲字，不会打错，但画面是现场重新执行的 —— 比静态文字更有说服力。
+>
+> **切到终端前先确认这张卡在屏幕上**，别让评委看到空终端。
 
 ### 1:47 – 2:00 · 结果（`⌘ + Tab` 切回仪表盘）
 
