@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.git/
+.DS_Store
+._*
+*.log
+models.bak.*
+preview*/

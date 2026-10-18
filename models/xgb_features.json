@@ -1,0 +1,17 @@
+[
+  "log_amount",
+  "hour",
+  "dow",
+  "is_chip",
+  "is_online",
+  "is_swipe",
+  "has_error",
+  "amount_z",
+  "win_mean_log_amount",
+  "win_std_log_amount",
+  "win_n_txn",
+  "win_amt_ratio",
+  "gap_prev_seconds",
+  "mcc_freq",
+  "win_unique_merchants"
+]

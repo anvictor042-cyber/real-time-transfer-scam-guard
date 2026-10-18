@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.DS_Store
+._*
+*.log
+.pytest_cache/
+preview*/
+SUBMIT.md
+submission/form_texts.py
+submission/make_deck.py
+submission/make_architecture.py

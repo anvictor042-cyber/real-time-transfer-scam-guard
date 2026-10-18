@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real-Time Transfer Scam Guard</title>
+<style>
+  /* ---------------------------------------------------------------
+     Design rules applied (taste-skill / minimalist-skill, adapted
+     for a dense operations console where those rules allow):
+
+       · no gradients, no shadows at rest, no hairline rules
+       · separation by a step in background tone, not by borders
+       · hierarchy from size and weight, not decoration
+       · warm-neutral ground; accents are muted, not neon
+       · tabular figures; monospace reserved for nothing here
+       · no emoji; plain specific copy, no marketing cliches
+     --------------------------------------------------------------- */
+  :root{
+    --bg:#0d0f12;
+    --surface-1:#16181d;
+    --surface-2:#1d2026;
+    --surface-3:#282b31;
+    --text:#f3f1ed;
+    --dim:#a8a5a0;
+    --faint:#7d7a75;
+    --accent:#8fa9d9;
+    --approve:#5fd09a;
+    --confirm:#f0b95c;
+    --block:#f27a7a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg); color:var(--text); overflow:hidden;
+    display:flex; flex-direction:column;
+    font:13px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------------- header ---------------- */
+  header{
+    background:var(--surface-1); padding:14px 20px 13px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    row-gap:8px;
+  }
+  .brand{font-size:15px; font-weight:600; letter-spacing:-.015em}
+  .brand em{font-style:normal; color:var(--accent)}
+  .meta{color:var(--faint); font-size:11.5px}
+  .status{display:inline-flex; align-items:center; gap:6px; color:var(--approve);
+          font-size:11.5px; font-weight:500}
+  .dot{width:5px; height:5px; border-radius:50%; background:var(--approve);
+       animation:p 1.7s ease-in-out infinite}
+  @keyframes p{0%,100%{opacity:1} 50%{opacity:.25}}
+
+  .controls{display:flex; gap:8px; align-items:center}
+  button{
+    background:var(--surface-3); color:var(--text); border:0; border-radius:6px;
+    padding:5px 11px; font-size:11.5px; font-family:inherit; cursor:pointer;
+    transition:background .14s ease;
+  }
+  button:hover{background:#2b2c31}
+
+  /* KPI — the number is the hierarchy, nothing else decorates it */
+  .kpis{display:flex; gap:16px; margin-left:auto; align-items:flex-end;
+        flex-wrap:wrap; justify-content:flex-end}
+  .kpi{text-align:right}
+  .kpi b{display:block; font-size:19px; font-weight:600; line-height:1.1; letter-spacing:-.025em}
+  .kpi i{font-style:normal; font-size:11px; color:var(--faint)}
+  .kpi.hero b{font-size:24px; color:var(--confirm)}
+  .kpi.hero i{color:#9c8a63}
+
+  /* ---------------- layout ---------------- */
+  main{flex:1; display:grid; grid-template-columns:1fr 412px; overflow:hidden}
+  .feed{overflow:auto; padding:14px 24px 22px}
+
+  .side{background:var(--surface-1); display:flex; flex-direction:column; overflow:hidden}
+  .side-head{padding:16px 18px 4px; display:flex; justify-content:space-between; align-items:baseline}
+  .side-head h2{font-size:13px; font-weight:600; letter-spacing:-.01em}
+  .side-head span{font-size:11.5px; color:var(--faint)}
+  .side-sub{padding:0 18px 12px; font-size:11.5px; color:var(--faint); line-height:1.5}
+  .msgs{flex:1; overflow:auto; padding:0 14px 16px}
+
+  /* ---------------- table ---------------- */
+  table{width:100%; border-collapse:collapse; table-layout:fixed}
+  th{
+    font-size:11px; color:var(--faint); text-align:left; font-weight:500;
+    padding:0 10px 10px; position:sticky; top:0; background:var(--bg); z-index:2;
+  }
+  td{padding:7px 10px; white-space:nowrap; vertical-align:middle; font-size:12.5px}
+  tbody tr{animation:rowIn .24s ease both}
+  @keyframes rowIn{from{opacity:0; transform:translateY(-3px)} to{opacity:1; transform:none}}
+  tbody tr:hover{background:var(--surface-1)}
+  tr.hot{background:#331a1f}
+  tr.hot:hover{background:#3b1f25}
+  tr.warn:hover{background:#3a2e1a}
+  tr.warn{background:#302615}
+
+  .pill{display:inline-block; padding:2px 9px; border-radius:5px;
+        font-size:10.5px; font-weight:600; letter-spacing:.005em}
+  .p-APPROVE{background:rgba(95,208,154,.22); color:#7ee0b0}
+  .p-CONFIRM{background:rgba(240,185,92,.24); color:#ffcb74}
+  .p-BLOCK{background:rgba(242,122,122,.24); color:#ff9292}
+
+  .bar{height:3px; border-radius:2px; background:var(--surface-3); width:66px;
+       display:inline-block; vertical-align:middle; overflow:hidden}
+  .bar>i{display:block; height:100%; border-radius:2px}
+
+  /* why: the plain-English reason, with the audit code beside it */
+  .why{font-size:11.5px; color:var(--dim); overflow:hidden;
+       text-overflow:ellipsis; white-space:nowrap; padding-right:4px}
+  .why .rc{font-size:9px; padding:0 5px; border-radius:3px; margin-left:6px;
+           background:var(--surface-3); color:#9aa6b8; vertical-align:1px}
+
+  .age{font-size:11.5px; color:var(--faint)}
+  .age.prot{color:var(--confirm); font-weight:600}
+
+  /* ---------------- explanation + guardian alert ---------------- */
+  .msg{background:var(--surface-2); border-radius:9px; padding:12px 13px;
+       margin-bottom:9px; animation:sl .22s ease}
+  .msg-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:7px}
+  .msg-head .d{font-size:10.5px; font-weight:600}
+  .msg-head .t{font-size:10.5px; color:var(--faint)}
+  .msg .txt{font-size:12.5px; line-height:1.55; color:#dcdad5}
+
+  /* the family alert, styled as the message the relative actually receives */
+  .notify{
+    margin-top:10px; background:#101114; border-radius:10px; padding:11px 12px;
+    animation:sl .3s ease;
+  }
+  .notify-head{display:flex; align-items:center; gap:9px; margin-bottom:8px}
+  .avatar{
+    width:26px; height:26px; border-radius:50%; background:#2b2c31;
+    color:var(--confirm); font-size:12px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+  }
+  .notify-who{font-size:11.5px; font-weight:600; color:#dcdad5}
+  .notify-who span{display:block; font-weight:400; color:var(--faint); font-size:10.5px}
+  .notify-now{margin-left:auto; font-size:10.5px; color:var(--faint)}
+  .notify-body{font-size:12px; line-height:1.55; color:#c9a961}
+  .notify-tag{display:inline-block; margin-top:8px; font-size:9.5px; color:var(--faint);
+              background:var(--surface-3); padding:1px 7px; border-radius:4px}
+
+  /* placeholder shown while Granite is writing */
+  .msg.pending .txt{color:var(--faint)}
+  .writing{display:inline-flex; align-items:center; gap:6px; color:var(--faint); font-size:12px}
+  .writing i{width:5px; height:5px; border-radius:50%; background:var(--confirm);
+             animation:blink 1.1s ease-in-out infinite}
+  .writing i:nth-child(2){animation-delay:.18s}
+  .writing i:nth-child(3){animation-delay:.36s}
+  @keyframes blink{0%,100%{opacity:.25} 50%{opacity:1}}
+
+  /* the threshold that triggered the pause, shown as facts not prose */
+  .limit{display:flex; gap:14px; margin-top:8px; font-size:10.5px; color:var(--faint)}
+  .limit b{display:block; font-size:12.5px; color:#d9d6d1; font-weight:600}
+
+  .empty{color:var(--faint); font-size:12px; padding:16px 4px; line-height:1.75}
+
+  .foot{
+    padding:11px 24px; font-size:11px; color:var(--faint);
+    display:flex; gap:22px; flex-wrap:wrap; background:var(--surface-1);
+  }
+  .foot b{color:var(--dim); font-weight:500}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Real-Time <em>Transfer Scam Guard</em></div>
+  <span class="meta">IBM LinuxONE · s390x · Telum</span>
+  <span class="status"><span class="dot"></span>live</span>
+
+  <div class="controls">
+    <span class="meta" id="speedLabel">5.0 tx/s</span>
+    <button onclick="setSpeed(-2)">slower</button>
+    <button onclick="setSpeed(2)">faster</button>
+    <button onclick="restart()">restart</button>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><b id="kScored">0</b><i>scored</i></div>
+    <div class="kpi"><b id="kConfirm" style="color:var(--confirm)">0</b><i>confirm</i></div>
+    <div class="kpi"><b id="kBlock" style="color:var(--block)">0</b><i>block</i></div>
+    <div class="kpi"><b id="kLat" style="color:var(--accent)">—</b><i>p50 ms</i></div>
+    <div class="kpi"><b id="kFamilies" style="color:var(--accent)">0</b><i>families</i></div>
+    <div class="kpi hero"><b id="kRec">$0</b><i>recovered</i></div>
+  </div>
+</header>
+
+<main>
+  <div class="feed">
+    <table>
+      <colgroup>
+        <col style="width:3.2%"><col style="width:10%"><col style="width:9.5%">
+        <col style="width:5.5%"><col style="width:8%"><col style="width:6%">
+        <col style="width:5%"><col style="width:9%"><col>
+        <col style="width:5.5%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>#</th><th>time</th><th>account</th><th>age</th><th>amount</th>
+          <th>risk</th><th></th><th>decision</th><th>why it was flagged</th><th>ms</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty">Waiting for the transfer stream…</div>
+  </div>
+
+  <aside class="side">
+    <div class="side-head">
+      <h2>What the customer is told</h2>
+      <span id="exCount">0</span>
+    </div>
+    <div class="side-sub">
+      Generated locally by IBM Granite. The holder gets plain language;
+      the linked relative gets a message they can act on.
+    </div>
+    <div class="msgs" id="msgs">
+      <div class="empty">
+        Nothing paused yet. When a transfer is held, both messages appear here.
+      </div>
+    </div>
+  </aside>
+</main>
+
+<div class="foot">
+  <span>fusion <b>LSTM + XGBoost</b></span>
+  <span>block <b id="thBlock">≥ 0.95</b></span>
+  <span>confirm <b id="thConfirm">≥ 0.55</b></span>
+  <span>inference on this LinuxONE instance — <b>no data leaves the platform</b></span>
+</div>
+
+<script>
+const rowsEl = document.getElementById('rows');
+const msgsEl = document.getElementById('msgs');
+let speed = 5.0, explainCount = 0;
+
+function setSpeed(d){
+  speed = Math.max(1, Math.min(30, speed + d));
+  document.getElementById('speedLabel').textContent = speed.toFixed(1) + ' tx/s';
+  fetch('/api/control', {method:'POST', headers:{'Content-Type':'application/json'},
+                         body: JSON.stringify({speed})});
+}
+function restart(){
+  fetch('/api/control', {method:'POST', headers:{'Content-Type':'application/json'},
+                         body: JSON.stringify({restart:true})});
+  rowsEl.innerHTML = ''; msgsEl.innerHTML = ''; explainCount = 0;
+  document.getElementById('exCount').textContent = '0';
+  document.getElementById('empty').style.display = '';
+}
+
+const color = v => v >= 0.95 ? 'var(--block)' : v >= 0.55 ? 'var(--confirm)' : 'var(--approve)';
+
+function addRow(d){
+  document.getElementById('empty').style.display = 'none';
+  const tr = document.createElement('tr');
+  if (d.decision === 'BLOCK') tr.className = 'hot';
+  else if (d.decision === 'CONFIRM') tr.className = 'warn';
+
+  const pct = Math.min(100, d.risk * 100);
+  const reasons = d.reason_codes || [];
+  const first = reasons.length ? reasons[0].en : '';
+  const codes = reasons.slice(0, 3).map(c =>
+    `<span class="rc" title="${c.en}">${c.code}</span>`).join('');
+
+  tr.innerHTML = `
+    <td style="color:var(--faint)">${d.seq}</td>
+    <td>${d.date} ${String(d.hour).padStart(2,'0')}:${String(d.minute).padStart(2,'0')}</td>
+    <td>U${d.user}/C${d.card}</td>
+    <td class="age ${d.protected ? 'prot' : ''}">${d.age_band}</td>
+    <td>$${d.amount.toFixed(2)}</td>
+    <td style="color:${color(d.risk)}; font-weight:600">${d.risk.toFixed(3)}</td>
+    <td><span class="bar"><i style="width:${pct}%; background:${color(d.risk)}"></i></span></td>
+    <td><span class="pill p-${d.decision}">${d.decision}</span></td>
+    <td><div class="why" title="${first}">${first}${codes}</div></td>
+    <td style="color:var(--faint)">${d.latency_ms.toFixed(0)}</td>`;
+
+  rowsEl.insertBefore(tr, rowsEl.firstChild);
+  while (rowsEl.children.length > 100) rowsEl.removeChild(rowsEl.lastChild);
+  document.getElementById('kScored').textContent = d.seq;
+}
+
+function renderCard(d, pending){
+  const div = document.createElement('div');
+  div.className = 'msg' + (pending ? ' pending' : '');
+  div.dataset.id = d.id || '';
+  const c = d.decision === 'BLOCK' ? 'var(--block)' : 'var(--confirm)';
+
+  const body = pending
+    ? '<div class="writing"><i></i><i></i><i></i> Granite is writing the explanation</div>'
+    : (d.customer || '(no text returned)');
+
+  let notify = '';
+  if (!pending && d.guardian) {
+    const rel = d.guardian_relation || 'relative';
+    const initial = rel.charAt(0).toUpperCase();
+    notify = `
+      <div class="notify">
+        <div class="notify-head">
+          <div class="avatar">${initial}</div>
+          <div class="notify-who">${rel} of account holder
+            <span>${d.guardian_mask || ''}</span></div>
+          <div class="notify-now">just now</div>
+        </div>
+        <div class="notify-body">${d.guardian}</div>
+        <div class="notify-tag">simulated alert</div>
+      </div>`;
+  }
+
+  const limit = (d.amount != null && d.guardian_limit != null) ? `
+    <div class="limit">
+      <div>amount<b>$${Number(d.amount).toFixed(2)}</b></div>
+      <div>guardian limit<b>$${Number(d.guardian_limit).toFixed(0)}</b></div>
+      <div>action<b>${d.decision}</b></div>
+    </div>` : '';
+
+  div.innerHTML = `
+    <div class="msg-head">
+      <span class="d" style="color:${c}">${d.decision}</span>
+      <span class="t">${pending ? 'generating' : d.ms + ' ms · ' + d.tokens + ' tok'}</span>
+    </div>
+    <div class="txt">${body}</div>
+    ${limit}
+    ${notify}`;
+  return div;
+}
+
+function addPending(d){
+  const e = msgsEl.querySelector('.empty');
+  if (e) e.remove();
+  msgsEl.insertBefore(renderCard(d, true), msgsEl.firstChild);
+  while (msgsEl.children.length > 10) msgsEl.removeChild(msgsEl.lastChild);
+}
+
+function addExplain(d){
+  const e = msgsEl.querySelector('.empty');
+  if (e) e.remove();
+  explainCount++;
+  document.getElementById('exCount').textContent = explainCount;
+
+  // replace the matching placeholder if there is one
+  const existing = d.id ? msgsEl.querySelector(`[data-id="${d.id}"]`) : null;
+  const card = renderCard(d, false);
+  if (existing) { existing.replaceWith(card); }
+  else { msgsEl.insertBefore(card, msgsEl.firstChild); }
+
+  while (msgsEl.children.length > 10) msgsEl.removeChild(msgsEl.lastChild);
+}
+
+function refreshStats(){
+  fetch('/api/stats').then(r => r.json()).then(s => {
+    const e = s.engine;
+    document.getElementById('kConfirm').textContent = e.counters.CONFIRM;
+    document.getElementById('kBlock').textContent = e.counters.BLOCK;
+    document.getElementById('kLat').textContent = e.latency_ms.p50.toFixed(0);
+    document.getElementById('kFamilies').textContent = e.counters.guardian_alerts;
+    document.getElementById('kRec').textContent =
+      '$' + Math.round(e.amount_recovered).toLocaleString();
+    // thresholds come from the calibrated operating point, not from constants
+    const th = e.thresholds || {};
+    if (th.block != null) document.getElementById('thBlock').textContent = '≥ ' + th.block.toFixed(2);
+    if (th.confirm != null) document.getElementById('thConfirm').textContent = '≥ ' + th.confirm.toFixed(2);
+  }).catch(() => {});
+}
+
+
+/* ---- ?seed=N : render a populated view without waiting for the stream ----
+   Used for screenshots and for a stable still in the pitch deck.
+   The live stream keeps running on top of it. */
+const REASONS = [
+  ['R01', "Amount far above this account's history"],
+  ['R09', "Amount far above the recent window average"],
+  ['R02', "Several transfers in a very short window"],
+  ['R03', "Transfer at an unusual hour"],
+  ['R07', "Transaction sequence looks abnormal"],
+  ['R08', "Structured risk profile is elevated"],
+  ['R06', "Rare or first-time merchant category"],
+  ['R04', "Remote / online channel"],
+  ['R05', "Retry after a failed attempt"],
+];
+const AGES = ['65+', '65+', '65+', '55-64', 'under-55'];
+const CHANNELS = ['Online', 'Swipe', 'Chip'];
+const RELS = ['daughter', 'son', 'niece', 'nephew', 'spouse'];
+
+function seedRows(n){
+  const rows = [];
+  for (let i = 0; i < n; i++) {
+    const u = Math.random();
+    const decision = u < 0.79 ? 'APPROVE' : (u < 0.91 ? 'CONFIRM' : 'BLOCK');
+    const risk = decision === 'BLOCK' ? 0.95 + Math.random() * 0.049
+               : decision === 'CONFIRM' ? 0.55 + Math.random() * 0.39
+               : 0.01 + Math.random() * 0.5;
+    const nCodes = decision === 'APPROVE' ? 1 : 2 + Math.floor(Math.random() * 2);
+    const picked = [];
+    const pool = decision === 'APPROVE' ? [7, 8] : [0, 1, 2, 3, 4, 5, 6];
+    while (picked.length < nCodes && pool.length) {
+      picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+    }
+    const amount = decision === 'APPROVE'
+      ? 5 + Math.random() * 90
+      : 120 + Math.random() * 1800;
+    const age = AGES[Math.floor(Math.random() * AGES.length)];
+    rows.push({
+      seq: n - i,
+      date: '2019-08-' + String(10 + (i % 18)).padStart(2, '0'),
+      hour: decision === 'BLOCK' ? 2 : 8 + Math.floor(Math.random() * 12),
+      minute: Math.floor(Math.random() * 60),
+      user: 1 + Math.floor(Math.random() * 19),
+      card: Math.floor(Math.random() * 4),
+      age_band: age,
+      protected: age !== 'under-55',
+      amount: amount,
+      channel: CHANNELS[Math.floor(Math.random() * 3)] + ' Transaction',
+      risk: risk,
+      decision: decision,
+      reason_codes: picked.map(k => ({code: REASONS[k][0], en: REASONS[k][1]})),
+      latency_ms: 20 + Math.random() * 14,
+    });
+  }
+  rows.reverse().forEach(r => addRow(r));
+}
+
+function seedExplain(){
+  addExplain({
+    decision: 'CONFIRM',
+    ms: 4820, tokens: 21, amount: 1450.00, guardian_limit: 180,
+    customer: "We paused this transfer because it goes to someone you have not paid before, late at night. If you are not sure about it, call your family before sending.",
+    guardian: "A $1,450 transfer to a new recipient was paused at 02:14. Please call her before it is released.",
+    guardian_relation: 'daughter',
+    guardian_mask: '+86 138****2041',
+  });
+  addExplain({
+    decision: 'BLOCK',
+    ms: 5110, tokens: 18, amount: 2100.00, guardian_limit: 180,
+    customer: "This transfer was stopped. It is much larger than your usual payments and went to an account you have never used.",
+    guardian: "A $2,100 transfer was blocked. Six small transfers preceded it within four minutes.",
+    guardian_relation: 'son',
+    guardian_mask: '+86 138****7730',
+  });
+}
+
+const params = new URLSearchParams(location.search);
+const seedCount = parseInt(params.get('seed') || '0', 10);
+if (seedCount > 0) {
+  seedRows(seedCount);
+  if (params.get('explain') !== '0') seedExplain();
+}
+
+if (params.get('nosse') !== '1') {
+  const es = new EventSource('/api/stream');
+  es.addEventListener('txn', e => addRow(JSON.parse(e.data)));
+  es.addEventListener('explain_pending', e => addPending(JSON.parse(e.data)));
+  es.addEventListener('explain', e => addExplain(JSON.parse(e.data)));
+  es.onerror = () => {};
+}
+
+document.getElementById('speedLabel').textContent = '5.0 tx/s';
+refreshStats();                  // 首帧就有数字，不要等第一个 2 秒周期
+setInterval(refreshStats, 2000);
+</script>
+</body>
+</html>

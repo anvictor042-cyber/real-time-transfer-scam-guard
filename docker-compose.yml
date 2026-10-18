@@ -1,0 +1,10 @@
+# 可选：用 docker compose 一键启动
+services:
+  scam-guard:
+    build: .
+    image: scam-guard:1.0
+    container_name: scam-guard
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./models:/app/models
