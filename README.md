@@ -29,7 +29,7 @@ where CONFIRM pauses the payment and brings in the family member who can actuall
 
 ## 1. The problem
 
-Older people are the main target of phone scams, and they move the money **themselves** — so
+Older people are the main target of phone scams, and they move the money **themselves**, so
 nothing looks wrong until the transfer clears. Banks and families only react afterwards. The one
 window to stop a scam transfer is **the few seconds before it is authorised**.
 
@@ -54,15 +54,15 @@ audited over time.
 
 ### Who it is for
 
-1. **Adult children living away from their parents** — they cannot watch every transfer, so the
+1. **Adult children living away from their parents.** They cannot watch every transfer, so the
    system watches for them. They set a guardian limit and receive an alert when a transfer needs
    confirmation.
-2. **Older adults and others who are frequently targeted** — the prompt is plain language, and it
+2. **Older adults and others who are frequently targeted.** The prompt is plain language, and it
    gives them a way to say *"I am not sure"* instead of losing the money.
-3. **Banks and payment providers** — fewer scam losses and complaints, plus a record they can show
+3. **Banks and payment providers.** Fewer scam losses and complaints, plus a record they can show
    regulators. The engine sits in the authorisation path, so it cuts loss without slowing genuine
    payments.
-4. **Anti-fraud centres and regulators** — a traceable, explainable record of each decision.
+4. **Anti-fraud centres and regulators.** A traceable, explainable record of each decision.
 
 ## 3. Architecture
 
@@ -117,7 +117,7 @@ Measured on the LinuxONE Community Cloud instance (3 vCPU, 8 GB, s390x), replayi
 |---|---|
 | Fraud recall | **65.2 %** |
 | Precision on stopped transfers | **96.7 %** |
-| Decision latency (p50) | **22 ms** (p95 50 ms) — varies ±3 ms between runs |
+| Decision latency (p50) | **22 ms** (p95 50 ms), varying ±3 ms between runs |
 | Amount recovered | **$18,418** |
 | Guardian notifications | 29 |
 
@@ -129,7 +129,7 @@ Offline model quality (held-out test split, 0.11 % positive rate):
 | XGBoost only | 0.0765 | 0.9411 | 0.161 |
 | **Fusion** | **0.4277** | **0.9654** | **0.506** |
 
-The fusion is better than either single model — that is the reason for using two frameworks rather
+The fusion is better than either single model, which is the reason for using two frameworks rather
 than one.
 
 ## 5. Model and thresholds
@@ -142,13 +142,13 @@ Thresholds are **calibrated from the data, not hard-coded**. After training, `ca
 scans the score distribution and picks the lowest cut-off that still meets a precision target
 on stopped transfers (98 % for BLOCK, 85 % for CONFIRM, with a minimum sample size). The chosen
 operating point is written to `models/meta.json` and read back by the engine. If you retrain,
-the thresholds move with the model — the failure mode where BLOCK silently never fires cannot
+the thresholds move with the model, so the failure mode where BLOCK silently never fires cannot
 recur.
 
 The fusion weight is selected on the **validation** split; the test split is only used for
 reporting, so the published numbers are not the result of tuning on the test set.
 
-**One honest caveat.** The corpus has only 271 frauds, 177 of them in the training split. The
+**A caveat.** The corpus has only 271 frauds, 177 of them in the training split. The
 LSTM is sensitive to initialisation at that sample size — across runs its PR-AUC ranged from
 0.22 to 0.38 while XGBoost stayed near 0.07. The shipped artefacts are from the best verified
 run; re-running `train/train_all.py` will produce a different model and therefore different

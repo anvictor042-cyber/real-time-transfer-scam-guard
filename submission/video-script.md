@@ -1,6 +1,6 @@
 # 3-Minute Demo Video Script
 
-**Hard limit: 3:00.** This narration is 390 words ≈ **2:41** at a calm 145 wpm, leaving ~19 s of headroom.
+**Hard limit: 3:00.** This narration is 370 words ≈ **2:33** at a calm 145 wpm, leaving ~27 s of headroom.
 
 ---
 
@@ -47,7 +47,7 @@ curl -s http://148.100.76.225:8000/api/health
 >
 > Approve, release it. Confirm, pause it, tell the customer in plain language, and alert a linked family member. Block, hold it, and write an audit record.
 >
-> That middle case is what nobody else does. It does not just stop the payment, it brings in the person who can actually stop the scam.
+> Confirm is the case worth watching. A blocked card can be retried somewhere else. A family member can end the call.
 
 ### 0:58 – 1:50 · Live demo
 **On screen:** the live dashboard, streaming
@@ -72,7 +72,7 @@ ssh datathon 'uname -m; nproc; sudo docker ps --format "{{.Names}} {{.Status}}"'
 **Say:**
 > This is not an x86 app ported over. We are on s390x: three cores and one on-chip AI accelerator.
 >
-> Because the accelerator sits on the same die as the CPU, the decision stays fast even while the language model is generating. And pervasive encryption means the data is protected by the platform, not by our code.
+> Because the accelerator sits on the same die as the CPU, the decision stays fast even while the language model is generating. Pervasive encryption means the platform protects the data, rather than the application code.
 
 ### 2:15 – 2:42 · Results
 **On screen:** pitch deck slide 7 (metrics)
@@ -84,9 +84,9 @@ ssh datathon 'uname -m; nproc; sudo docker ps --format "{{.Names}} {{.Status}}"'
 ### 2:42 – 3:00 · Close
 **On screen:** pitch deck slide 8 (beneficiaries), then back to the dashboard
 **Say:**
-> For the older customer, it buys back the seconds where they can still change their mind. For their children, an alert they can act on. For the bank, loss avoided with a record they can show a regulator.
+> For the older customer, it buys back the seconds where they can still change their mind. Their children get a call they can act on, and the bank gets a loss avoided with a record it can show a regulator.
 >
-> Real-time AI, deciding while it still matters. Thank you.
+> Thank you.
 
 ---
 

@@ -94,7 +94,7 @@ def slide_title(prs, total):
          size=40, color=WHITE, bold=True)
 
     text(s, 0.9, 2.75, 11.2, 0.7,
-         "Stopping scam-driven transfers inside the bank's authorisation path —\nbefore the money leaves.",
+         "Stopping scam-driven transfers inside the bank's authorisation path,\nbefore the money leaves.",
          size=19, color=INK, spacing=1.25)
 
     card(s, 0.9, 3.95, 11.5, 0.62, fill=RGBColor(0xEE, 0xF2, 0xFF),
@@ -147,7 +147,7 @@ def slide_problem(prs, n, total):
 
     pts = [("It looks normal to the bank", "Valid credentials, valid device, correct PIN. Nothing in the payment itself is anomalous."),
            ("Existing systems target card fraud", "They detect misuse after the fact. They are not built for a customer being talked into paying right now."),
-           ("The family is never involved", "The people who could actually stop it — the adult children — have no way in.")]
+           ("The family is never involved", "The adult children who could actually stop it have no way in.")]
     for i, (t, d) in enumerate(pts):
         x = 0.9 + i * 3.9
         card(s, x, 4.35, 3.6, 1.85)
@@ -180,7 +180,7 @@ def slide_solution(prs, n, total):
     card(s, 0.9, 4.78, 11.5, 1.55)
     text(s, 1.15, 4.95, 5.3, 0.35, "The part nobody else does", size=13, color=PURPLE, bold=True)
     text(s, 1.15, 5.33, 5.3, 0.85,
-         "CONFIRM is not just a block. It recruits the one person\nwho can actually stop the scam: the family.",
+         "CONFIRM pauses the transfer and brings in the one person\nwho can end the call: the family.",
          size=11, color=INK, spacing=1.2)
 
     text(s, 6.9, 4.95, 5.3, 0.35, "Every decision is auditable", size=13, color=PURPLE, bold=True)
@@ -227,7 +227,7 @@ def slide_ibmz(prs, n, total):
 
     items = [("Telum on-chip AI",
               "Both models and the Granite LLM run on the same processor.\n"
-              "The accelerator sits on-die, not behind a GPU bus — which is why\n"
+              "The accelerator sits on the same die as the CPU, which is why\n"
               "the decision stays fast even while the LLM generates."),
              ("Pervasive encryption",
               "Data encrypted at rest and in transit by the platform,\n"
@@ -320,7 +320,7 @@ def slide_value(prs, n, total):
               "sits in the authorisation path, so it cuts loss without slowing genuine payments."),
              ("Anti-fraud teams and regulators",
               "Every decision carries reason codes. Cases can be reviewed later and the model audited\n"
-              "over time — a requirement in most regulated markets.")]
+              "over time, which most regulated markets require.")]
     for i, (t, d) in enumerate(items):
         y = 1.82 + i * 1.23
         card(s, 0.9, y, 11.5, 1.06)
@@ -339,7 +339,7 @@ def slide_value(prs, n, total):
 # ============================================================ 8 · 诚实边界
 def slide_limits(prs, n, total):
     s = blank(prs)
-    header(s, "scope", "What this prototype is — and is not", DIM)
+    header(s, "scope", "What this prototype is and is not", DIM)
 
     left = ("What it does", GREEN, RGBColor(0xF0, 0xFD, 0xF4), RGBColor(0xBB, 0xF7, 0xD0),
             ["Streams transfers and scores each one in ~22 ms",
@@ -349,7 +349,7 @@ def slide_limits(prs, n, total):
              "Fully containerised, runs on LinuxONE",
              "Granite explanations generated locally, no API calls"])
     right = ("What it does not do (yet)", AMBER, RGBColor(0xFF, 0xFB, 0xEB), RGBColor(0xFD, 0xE6, 0x8A),
-             ["No live bank core integration — the stream is historical replay",
+             ["No live bank core integration; the stream is historical replay",
               "Guardian notification is simulated, not a real SMS gateway",
               "No production load testing at peak volume",
               "Age and guardian fields are a synthetic scenario overlay",
