@@ -4,7 +4,7 @@
 
 官方对视频的要求只有三件事：讲清问题、演示方案、讲亮点和影响 —— **不需要幻灯片**。
 
-约 240 词 ≈ **1 分 45 秒**。
+约 275 词 ≈ **1 分 55 秒**。
 
 ---
 
@@ -27,15 +27,15 @@
 
 ## 逐字稿
 
-### 0:00 – 0:18 · 问题（停在仪表盘）
+### 0:00 – 0:24 · 问题（停在仪表盘）
 
 > Every year, older people are tricked into sending money away.
 >
-> Last year in the United States alone, they reported losing almost five billion dollars. And most cases never get reported at all.
+> In 2024, older Americans reported losing almost five billion dollars. The FBI says the real figure is higher, because many victims never report it.
 >
 > The bank sees nothing wrong, because the customer is doing it themselves. By the time anyone notices, the money is gone.
 
-### 0:18 – 0:42 · 方案（仍在仪表盘，指着表格）
+### 0:24 – 0:45 · 方案（仍在仪表盘，指着表格）
 
 > Our system scores every transfer before it goes through. It gives one of three answers.
 >
@@ -45,39 +45,46 @@
 >
 > **Block** — stop it, and save a record. *(指一行红色的)*
 
-### 0:42 – 1:05 · 点开一个案例（**这一段最关键**）
+### 0:45 – 1:11 · 点开一个案例（**这一段最关键**）
 
 **动作：用鼠标点那一行红色的 BLOCK**
 
 > Let me show you one. *(点击)*
 >
-> These are the six transfers behind that decision. Nine minutes, from fourteen dollars to six hundred. The amount grew forty times.
+> These are the transfers behind that decision. Same account, a few minutes apart, and the amount keeps climbing.
 >
 > That is what a scam looks like in the data, and it is what the sequence model reads.
 
-### 1:05 – 1:25 · 解释
+> 💡 **不要念死数字。** 卡片上的笔数和金额每次都不同，念错反而暴露是背稿。
+>
+> 想加一个数字就说你**屏幕上真实看到的那个**，比如：
+> "Six transfers in nine minutes. The amount grew forty times." —— 但**先看清屏幕**再念。
+>
+> 最稳的说法：**"Same account, a few minutes apart, the amount keeps climbing."** 这句永远正确。
+
+### 1:11 – 1:30 · 解释
 
 **动作：鼠标移到右侧解释卡**
 
-> At the same time, IBM Granite writes a message the customer can understand, and an alert for the family. It all runs on this machine, so no data leaves the bank.
+> At the same time, IBM Granite writes a message the customer can understand, and a simulated alert for the family. It all runs on this machine, so no data leaves the bank.
 >
 > The answer comes back in about 22 milliseconds.
 
-### 1:25 – 1:42 · 证明是 IBM Z（切到终端）
+### 1:30 – 1:47 · 证明是 IBM Z（切到终端）
 
 **动作：`⌘ + Tab` 切到终端**
 
-> This is s390x, a real IBM Z machine. Three cores, and one AI chip on the processor. That is why the decision stays fast.
+> This is s390x, a real IBM Z machine. Three cores, and an AI accelerator built into the processor. That is why the decision stays fast.
 
 *(终端里已经显示 `s390x` 和 `3`)*
 
-### 1:42 – 1:55 · 结果（`⌘ + Tab` 切回仪表盘）
+### 1:47 – 2:00 · 结果（`⌘ + Tab` 切回仪表盘）
 
-> On the full test set, we catch 65 percent of fraud. And 96 out of 100 transfers we stop are real fraud. That is about 18 thousand dollars recovered.
+> Across the 587 transfers we replay, we catch 65 percent of fraud. And 96 out of 100 transfers we stop are real fraud. That is about 18 thousand dollars recovered.
 
 *(顶部计数器就显示这些数字)*
 
-### 1:55 – 2:05 · 收尾
+### 2:00 – 2:12 · 收尾
 
 > For the customer, a few more seconds to change their mind. For the family, an alert they can act on.
 >
@@ -88,11 +95,11 @@
 ## 只有一次窗口切换
 
 ```
-0:00 ─────────────── 1:25  仪表盘
+0:00 ─────────────── 1:30  仪表盘
                        ↓  ⌘ + Tab
-1:25 ─────────────── 1:42  终端
+1:30 ─────────────── 1:47  终端
                        ↓  ⌘ + Tab
-1:42 ─────────────── 2:05  仪表盘
+1:47 ─────────────── 2:12  仪表盘
 ```
 
 ---
@@ -101,9 +108,9 @@
 
 | 时间 | 动作 | 说明 |
 |---|---|---|
-| 0:18–0:42 | 鼠标指绿/橙/红三行各停 1 秒 | 不用点 |
-| **0:42** | **点红色 BLOCK 那一行** | 会展开 6 笔交易链 |
-| 1:05 | 鼠标移到右侧解释卡 | 停 2 秒 |
+| 0:24–0:45 | 鼠标指绿/橙/红三行各停 1 秒 | 不用点 |
+| **0:45** | **点红色 BLOCK 那一行** | 展开该账户的交易链 |
+| 1:11 | 鼠标移到右侧解释卡 | 停 2 秒 |
 
 > 点开案例后**再点一次同一行可以收起**。如果点错了，再点一下关掉就行。
 >
@@ -120,7 +127,7 @@ YouTube → 可见性 **Unlisted（不公开列出）** → 传完开无痕窗�
 ## 最后检查
 
 ```
-☐ 时长 < 3:00（2:05 左右最舒服）
+☐ 时长 < 3:00（2:12 左右最舒服）
 ☐ 地址栏能看到 148.100.76.225:8000
 ☐ APPROVE / CONFIRM / BLOCK 都出现过
 ☐ 点开过案例，能看到 6 笔金额递增的链
