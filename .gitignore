@@ -10,7 +10,9 @@ FILL-THE-FORM.md
 RECORDING-GUIDE.md
 SUBMIT.md
 __pycache__/
+_a4.html
 models.bak.*
 preview*/
 push_via_api.py
+submission/preview*/
 venv/

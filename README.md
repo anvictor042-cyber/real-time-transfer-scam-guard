@@ -20,10 +20,15 @@ where CONFIRM pauses the payment and brings in the family member who can actuall
 | Amount recovered | **$18,418** |
 | Families alerted | 29 |
 
-**Deliverables** · [Pitch deck (PDF)](submission/pitch-deck.pdf) ·
+**Deliverables** · [Proposal, 3-page A4 (PDF)](submission/proposal.pdf) ·
+[Slides, 16:9 (PDF)](submission/pitch-deck.pdf) ·
 [Architecture](submission/architecture.png) ·
 [Demo video script](submission/VIDEO-SCRIPT.md) ·
 [Open-source inventory](OPENSOURCE.md)
+
+The A4 proposal is the document we submitted. The 16:9 slides are the same
+material arranged for speaking; both are generated from source in
+`submission/`, so either can be regenerated.
 
 ---
 
