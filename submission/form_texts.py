@@ -22,7 +22,7 @@ Decision and explanation are decoupled: the decision returns in about 22 ms, whi
 
 Q3 = """The entire solution runs on IBM LinuxONE (s390x), not an x86 port.
 
-Telum on-chip AI: inference for both models and the Granite LLM executes on the same processor, with the on-chip AI accelerator handling matrix operations. The decision path stays near 35 ms even while the LLM generates explanations concurrently, because the accelerator sits on-die rather than behind a GPU bus. That is what makes real-time scoring practical inside an authorisation path.
+Telum on-chip AI: inference for both models and the Granite LLM executes on the same processor, with the on-chip AI accelerator handling matrix operations. The decision path stays near 22 ms even while the LLM generates explanations concurrently, because the accelerator sits on-die rather than behind a GPU bus. That is what makes real-time scoring practical inside an authorisation path.
 
 Pervasive encryption: the platform encrypts data at rest and in transit, with quantum-safe protection. Scam detection must read highly sensitive transfer and identity context, so this is a prerequisite.
 
