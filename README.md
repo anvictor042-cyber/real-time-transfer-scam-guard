@@ -22,7 +22,7 @@ where CONFIRM pauses the payment and brings in the family member who can actuall
 
 **Deliverables** · [Pitch deck (PDF)](submission/pitch-deck.pdf) ·
 [Architecture](submission/architecture.png) ·
-[Demo video script](submission/video-script.md) ·
+[Demo video script](submission/VIDEO-SCRIPT.md) ·
 [Open-source inventory](OPENSOURCE.md)
 
 ---

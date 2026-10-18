@@ -159,6 +159,21 @@
   .limit{display:flex; gap:14px; margin-top:8px; font-size:10.5px; color:var(--faint)}
   .limit b{display:block; font-size:12.5px; color:#d9d6d1; font-weight:600}
 
+  /* case replay: click a row to see the seven transfers behind the decision */
+  tbody tr.row{cursor:pointer}
+  tbody tr.row.sel{background:var(--surface-3)}
+  tr.case>td{background:var(--surface-2); padding:0}
+  .casebox{padding:14px 16px 16px}
+  .casebox h4{font-size:12px; font-weight:600; color:var(--dim); margin-bottom:10px}
+  .casebox h4 span{color:var(--faint); font-weight:400}
+  .chain{display:flex; flex-direction:column; gap:2px; font-size:11.5px}
+  .step{display:grid; grid-template-columns:64px 90px 78px 74px 1fr; gap:10px;
+        padding:4px 8px; border-radius:4px; color:var(--dim)}
+  .step.now{background:var(--surface-3); color:var(--text); font-weight:600}
+  .step .r{text-align:right}
+  .step .up{color:var(--confirm)}
+  .casebox .note{margin-top:10px; font-size:11px; color:var(--faint)}
+
   .empty{color:var(--faint); font-size:12px; padding:16px 4px; line-height:1.75}
 
   .foot{
@@ -241,6 +256,8 @@
 const rowsEl = document.getElementById('rows');
 const msgsEl = document.getElementById('msgs');
 let speed = 5.0, explainCount = 0;
+const recent = [];          // 最近若干笔，供案例回放使用
+let openCase = null;        // 当前展开的行元素
 
 let running = false;
 
@@ -284,9 +301,16 @@ const color = v => v >= 0.95 ? 'var(--block)' : v >= 0.55 ? 'var(--confirm)' : '
 
 function addRow(d){
   document.getElementById('empty').style.display = 'none';
+  recent.push(d);
+  if (recent.length > 400) recent.shift();
+
   const tr = document.createElement('tr');
-  if (d.decision === 'BLOCK') tr.className = 'hot';
-  else if (d.decision === 'CONFIRM') tr.className = 'warn';
+  tr.classList.add('row');
+  tr.dataset.key = d.user + '-' + d.card;
+  tr.dataset.seq = d.seq;
+  if (d.decision === 'BLOCK') tr.classList.add('hot');
+  else if (d.decision === 'CONFIRM') tr.classList.add('warn');
+  tr.addEventListener('click', () => toggleCase(tr, d));
 
   const pct = Math.min(100, d.risk * 100);
   const reasons = d.reason_codes || [];
@@ -363,6 +387,52 @@ function addPending(d){
   while (msgsEl.children.length > 10) msgsEl.removeChild(msgsEl.lastChild);
 }
 
+function toggleCase(tr, d){
+  // 再点一次收起
+  if (openCase && openCase.tr === tr) {
+    openCase.detail.remove(); tr.classList.remove('sel');
+    openCase = null; return;
+  }
+  if (openCase) { openCase.detail.remove(); openCase.tr.classList.remove('sel'); }
+
+  // 同一账户、且不晚于当前这笔的最近 7 笔
+  const chain = recent.filter(r =>
+    r.user === d.user && r.card === d.card && r.seq >= d.seq - 6 && r.seq <= d.seq
+  ).sort((a, b) => a.seq - b.seq);
+
+  const rows = chain.map(r => {
+    const now = r.seq === d.seq;
+    const amt = '$' + r.amount.toFixed(2);
+    const cls = now ? 'step now' : 'step';
+    const mark = now ? 'this one' : '';
+    return `<div class="${cls}">
+      <span>#${r.seq}</span>
+      <span>${String(r.hour).padStart(2,'0')}:${String(r.minute).padStart(2,'0')}</span>
+      <span>${amt}</span>
+      <span>${r.channel.replace(' Transaction','')}</span>
+      <span class="r">${r.risk.toFixed(3)} ${mark}</span>
+    </div>`;
+  }).join('');
+
+  const first = chain.length ? chain[0].amount : d.amount;
+  const last = chain.length ? chain[chain.length - 1].amount : d.amount;
+  const growth = first > 0 ? (last / first).toFixed(1) : '—';
+
+  const detail = document.createElement('tr');
+  detail.className = 'case';
+  detail.innerHTML = `<td colspan="10"><div class="casebox">
+    <h4>The ${chain.length} transfers behind this decision
+        <span>account U${d.user}/C${d.card}</span></h4>
+    <div class="chain">${rows || '<div class="step">no history in buffer</div>'}</div>
+    <div class="note">Amount grew ${growth}× across the window.
+      The sequence model reads this window; the reason codes above record why it fired.</div>
+  </div></td>`;
+
+  tr.after(detail);
+  tr.classList.add('sel');
+  openCase = {tr, detail};
+}
+
 function addExplain(d){
   const e = msgsEl.querySelector('.empty');
   if (e) e.remove();
@@ -414,41 +484,53 @@ const CHANNELS = ['Online', 'Swipe', 'Chip'];
 const RELS = ['daughter', 'son', 'niece', 'nephew', 'spouse'];
 
 function seedRows(n){
-  const rows = [];
-  for (let i = 0; i < n; i++) {
-    const u = Math.random();
-    const decision = u < 0.79 ? 'APPROVE' : (u < 0.91 ? 'CONFIRM' : 'BLOCK');
-    const risk = decision === 'BLOCK' ? 0.95 + Math.random() * 0.049
-               : decision === 'CONFIRM' ? 0.55 + Math.random() * 0.39
-               : 0.01 + Math.random() * 0.5;
-    const nCodes = decision === 'APPROVE' ? 1 : 2 + Math.floor(Math.random() * 2);
-    const picked = [];
-    const pool = decision === 'APPROVE' ? [7, 8] : [0, 1, 2, 3, 4, 5, 6];
-    while (picked.length < nCodes && pool.length) {
-      picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
-    }
-    const amount = decision === 'APPROVE'
-      ? 5 + Math.random() * 90
-      : 120 + Math.random() * 1800;
+  // 生成「同一账户连续若干笔」的链，而不是每行随机账户。
+  // 真实流里同一张卡的交易是成串出现的，案例回放才有意义。
+  const out = [];
+  let seq = 1;                       // 按时间递增：同一条链里，越晚的 seq 越大
+  while (out.length < n) {
+    const user = 1 + Math.floor(Math.random() * 19);
+    const card = Math.floor(Math.random() * 4);
     const age = AGES[Math.floor(Math.random() * AGES.length)];
-    rows.push({
-      seq: n - i,
-      date: '2019-08-' + String(10 + (i % 18)).padStart(2, '0'),
-      hour: decision === 'BLOCK' ? 2 : 8 + Math.floor(Math.random() * 12),
-      minute: Math.floor(Math.random() * 60),
-      user: 1 + Math.floor(Math.random() * 19),
-      card: Math.floor(Math.random() * 4),
-      age_band: age,
-      protected: age !== 'under-55',
-      amount: amount,
-      channel: CHANNELS[Math.floor(Math.random() * 3)] + ' Transaction',
-      risk: risk,
-      decision: decision,
-      reason_codes: picked.map(k => ({code: REASONS[k][0], en: REASONS[k][1]})),
-      latency_ms: 20 + Math.random() * 14,
-    });
+    const prot = age !== 'under-55';
+    const runLen = 5 + Math.floor(Math.random() * 4);          // 5–8 笔
+    const base = 8 + Math.random() * 40;
+    const channel = CHANNELS[Math.floor(Math.random() * 3)] + ' Transaction';
+    const hour = Math.random() < 0.5 ? 2 : 8 + Math.floor(Math.random() * 12);
+
+    // 金额逐笔放大，最后一笔触发拦截或确认
+    for (let i = 0; i < runLen && out.length < n; i++) {
+      const growth = Math.pow(2.1, i);
+      const amount = +(base * growth).toFixed(2);
+      const last = i === runLen - 1;
+      const decision = last ? (Math.random() < 0.55 ? 'BLOCK' : 'CONFIRM') : 'APPROVE';
+      const risk = decision === 'BLOCK' ? 0.95 + Math.random() * 0.049
+                 : decision === 'CONFIRM' ? 0.6 + Math.random() * 0.34
+                 : 0.02 + Math.random() * 0.4;
+      const pool = decision === 'APPROVE' ? [7, 8] : [0, 1, 2, 3, 4, 5, 6];
+      const picked = [];
+      const want = decision === 'APPROVE' ? 1 : 2 + Math.floor(Math.random() * 2);
+      while (picked.length < want && pool.length) {
+        picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      }
+      out.push({
+        seq: seq++,
+        date: '2019-08-' + String(10 + (out.length % 18)).padStart(2, '0'),
+        hour: hour,
+        minute: (i * 2 + Math.floor(Math.random() * 3)) % 60,
+        user, card,
+        age_band: age,
+        protected: prot,
+        amount,
+        channel,
+        risk,
+        decision,
+        reason_codes: picked.map(k => ({code: REASONS[k][0], en: REASONS[k][1]})),
+        latency_ms: 20 + Math.random() * 14,
+      });
+    }
   }
-  rows.reverse().forEach(r => addRow(r));
+  out.forEach(r => addRow(r));       // 从老到新依次加入，最新的自然排在最上面
 }
 
 function seedExplain(){
@@ -475,6 +557,11 @@ const seedCount = parseInt(params.get('seed') || '0', 10);
 if (seedCount > 0) {
   seedRows(seedCount);
   if (params.get('explain') !== '0') seedExplain();
+  // ?case=1 自动展开第一笔拦截的案例（截图/静帧用）
+  if (params.get('case') === '1') {
+    const row = rowsEl.querySelector('tr.hot');
+    if (row) row.click();
+  }
 }
 
 if (params.get('nosse') !== '1') {

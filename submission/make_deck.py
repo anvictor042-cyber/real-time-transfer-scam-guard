@@ -140,19 +140,23 @@ def slide_problem(prs, n, total):
             text(s, x + wid - 0.02, 2.26, gap + 0.04, 0.3, "›", size=20, color=DIM,
                  align=PP_ALIGN.CENTER)
 
-    card(s, 0.9, 3.42, 11.5, 0.62, fill=RGBColor(0xFE, 0xF2, 0xF2), border=RGBColor(0xFE, 0xCA, 0xCA))
-    text(s, 1.15, 3.57, 11.0, 0.35,
+    card(s, 0.9, 3.30, 11.5, 0.98, fill=RGBColor(0xFE, 0xF2, 0xF2), border=RGBColor(0xFE, 0xCA, 0xCA))
+    text(s, 1.15, 3.42, 11.0, 0.34,
          "The only effective intervention point is the few seconds BEFORE authorisation.",
-         size=14, color=RED, bold=True)
+         size=13.5, color=RED, bold=True)
+    text(s, 1.15, 3.80, 11.0, 0.38,
+         "$4.885 billion reported lost by older Americans in 2024 across 147,127 complaints, "
+         "up 43% on 2023.  FBI IC3, 2025",
+         size=10.5, color=RGBColor(0x8a, 0x3a, 0x3a))
 
     pts = [("It looks normal to the bank", "Valid credentials, valid device, correct PIN. Nothing in the payment itself is anomalous."),
            ("Existing systems target card fraud", "They detect misuse after the fact. They are not built for a customer being talked into paying right now."),
            ("The family is never involved", "The adult children who could actually stop it have no way in.")]
     for i, (t, d) in enumerate(pts):
         x = 0.9 + i * 3.9
-        card(s, x, 4.35, 3.6, 1.85)
-        text(s, x + 0.25, 4.55, 3.1, 0.4, t, size=13, color=INK, bold=True)
-        text(s, x + 0.25, 4.98, 3.1, 1.1, d, size=10.5, color=DIM, spacing=1.15)
+        card(s, x, 4.52, 3.6, 1.80)
+        text(s, x + 0.25, 4.68, 3.1, 0.4, t, size=13, color=INK, bold=True)
+        text(s, x + 0.25, 5.10, 3.1, 1.1, d, size=10.5, color=DIM, spacing=1.15)
 
     footer(s, n, total)
     return s

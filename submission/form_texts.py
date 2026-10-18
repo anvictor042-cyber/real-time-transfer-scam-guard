@@ -4,7 +4,9 @@
 import json
 import os
 
-Q1 = """Older people are the main target of phone scams, and they authorise the transfer themselves. To the bank the payment looks normal: the customer authenticated properly, from a device they have used before. Nothing is wrong until the money clears, and by then it is gone.
+Q1 = """Older people are the main target of phone scams, and they authorise the transfer themselves. In 2024 the FBI's IC3 logged 147,127 elder-fraud complaints reporting $4.885 billion in losses, 43% more than 2023, and the FBI notes that reporting is incomplete because victims are embarrassed or do not know they were scammed.
+
+To the bank the payment looks normal: the customer authenticated properly, from a device they have used before. Nothing is wrong until the money clears, and by then it is gone.
 
 Banks and families react afterwards, when recovery is unlikely. The intervention point is the few seconds between the victim being persuaded and the transfer being authorised.
 
