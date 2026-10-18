@@ -150,7 +150,7 @@ def slide_problem(prs, n, total):
          size=10.5, color=RGBColor(0x8a, 0x3a, 0x3a))
 
     pts = [("It looks normal to the bank", "Valid credentials, valid device, correct PIN. Nothing in the payment itself is anomalous."),
-           ("Existing systems target card fraud", "They detect misuse after the fact. They are not built for a customer being talked into paying right now."),
+           ("Built for card fraud", "They detect misuse after the fact. They are not built for a customer being talked into paying right now."),
            ("The family is never involved", "The adult children who could actually stop it have no way in.")]
     for i, (t, d) in enumerate(pts):
         x = 0.9 + i * 3.9
@@ -201,10 +201,8 @@ def slide_arch(prs, n, total):
     s = blank(prs)
     header(s, "architecture", "Two models, one decision, ~22 ms", BLUE)
     if os.path.exists(ARCH):
-        s.shapes.add_picture(ARCH, Inches(0.55), Inches(1.62), width=Inches(12.25))
-    text(s, 0.9, 6.72, 11.5, 0.3,
-         "Decision and explanation are decoupled: the decision returns in ~22 ms, while IBM Granite explains asynchronously.",
-         size=10, color=DIM, italic=True)
+        # 图片比例 16:7.75 (2.065:1)。按高度摆放，底部停在 6.90in，避开页脚
+        s.shapes.add_picture(ARCH, Inches(1.14), Inches(1.55), height=Inches(5.35))
     footer(s, n, total)
     return s
 
@@ -215,11 +213,8 @@ def slide_console(prs, n, total):
     header(s, "the console", "This is the screen, running on LinuxONE", BLUE)
     shot = os.path.join(HERE, "dashboard.png")
     if os.path.exists(shot):
-        s.shapes.add_picture(shot, Inches(1.35), Inches(1.5), height=Inches(5.55))
-    text(s, 0.9, 7.12, 11.5, 0.3,
-         "Every row is a live decision. Right lane: the plain-language message the holder sees, "
-         "and the alert the linked relative receives.",
-         size=10, color=DIM, italic=True)
+        # 16:9 截图。按高度摆放，底部停在 6.90in，避开页脚
+        s.shapes.add_picture(shot, Inches(1.82), Inches(1.45), height=Inches(5.45))
     footer(s, n, total)
     return s
 

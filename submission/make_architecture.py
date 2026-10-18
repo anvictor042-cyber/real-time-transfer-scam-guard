@@ -19,11 +19,11 @@ GREEN = "#16a34a"
 RED = "#dc2626"
 GRAY = "#e2e8f0"
 
-fig, ax = plt.subplots(figsize=(16, 9), dpi=170)
+fig, ax = plt.subplots(figsize=(16, 7.75), dpi=170)
 fig.patch.set_facecolor(BG)
 ax.set_facecolor(BG)
 ax.set_xlim(0, 16)
-ax.set_ylim(0, 9)
+ax.set_ylim(0.0, 7.75)
 ax.axis("off")
 
 
@@ -48,11 +48,7 @@ def arrow(x1, y1, x2, y2, color="#94a3b8", lw=1.8):
                                  shrinkA=2, shrinkB=2))
 
 
-# ---------------- title ----------------
-ax.text(0.35, 8.55, "Real-Time Transfer Scam Guard", fontsize=21, weight="bold", color=INK)
-ax.text(0.35, 8.18, "Decision inside the authorisation path  ·  IBM Z Datathon 2026  ·  "
-                    "Track: Real-Time AI for Critical Decisions  ·  Team Chinese Can Fly",
-        fontsize=10.5, color=DIM)
+# 标题由幻灯片本身提供，图里不再重复
 
 # ---------------- platform band (right) ----------------
 band = FancyBboxPatch((12.35, 1.05), 3.3, 6.5, boxstyle="round,pad=0.03,rounding_size=0.15",
@@ -99,7 +95,7 @@ ax.plot([4.85, 8.35], [3.05, 3.05], color="#94a3b8", lw=1.8, zorder=1)
 arrow(6.6, 3.05, 6.6, 2.55)
 
 box(5.15, 1.62, 2.9, 0.93, "Weighted fusion 0.85 / 0.15",
-    "risk score + 9 reason codes  ·  ~35 ms", fc="#ecfdf5", ec="#a7f3d0", fs=11, sfs=8.3)
+    "risk score + 9 reason codes  ·  ~22 ms", fc="#ecfdf5", ec="#a7f3d0", fs=11, sfs=8.3)
 
 # decision branches
 arrow(6.6, 1.6, 6.6, 1.3)
