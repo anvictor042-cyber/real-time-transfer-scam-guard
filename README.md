@@ -2,7 +2,28 @@
 
 > Stop scam-driven transfers **inside the bank's authorisation path**, before the money leaves.
 
-IBM Z Datathon 2026 · **Track: Real-Time AI for Critical Decisions** · Team: **Chinese Can Fly**
+**IBM Z Datathon 2026** · Track: **Real-Time AI for Critical Decisions** · Team: **Chinese Can Fly**
+
+![The live console on LinuxONE](submission/dashboard.png)
+
+*Running on IBM LinuxONE (s390x). Left: every transfer is scored as it arrives. Right: the
+plain-language message the account holder receives, and the alert sent to a linked relative.*
+
+**What it does in one line:** scores each transfer in ~22 ms and returns APPROVE / CONFIRM / BLOCK,
+where CONFIRM pauses the payment and brings in the family member who can actually stop the scam.
+
+| Measured on 587 replayed transfers | |
+|---|---|
+| Fraud recall | **65.2 %** |
+| Precision on stopped transfers | **96.7 %** |
+| Median decision latency | **22 ms** (p95 50 ms) |
+| Amount recovered | **$18,418** |
+| Families alerted | 29 |
+
+**Deliverables** · [Pitch deck (PDF)](submission/pitch-deck.pdf) ·
+[Architecture](submission/architecture.png) ·
+[Demo video script](submission/video-script.md) ·
+[Open-source inventory](OPENSOURCE.md)
 
 ---
 
