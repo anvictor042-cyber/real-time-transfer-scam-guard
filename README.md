@@ -20,7 +20,7 @@ where CONFIRM pauses the payment and brings in the family member who can actuall
 | Amount recovered | **$18,418** |
 | Families alerted | 29 |
 
-**Deliverables** · [Proposal, 3-page A4 (PDF)](submission/proposal.pdf) ·
+**Deliverables** · [Proposal, 3-page A4 (PDF)](submission/Real-Time-Transfer-Scam-Guard-Chinese-Can-Fly.pdf) ·
 [Slides, 16:9 (PDF)](submission/pitch-deck.pdf) ·
 [Architecture](submission/architecture.png) ·
 [Demo video script](submission/VIDEO-SCRIPT.md) ·

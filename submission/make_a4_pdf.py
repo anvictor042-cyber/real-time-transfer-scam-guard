@@ -5,7 +5,7 @@
 英文按 humanizer 规范写：不用「不是X而是Y」对比、不用单句升华收尾、
 不用「nobody else」这类抬价说法、不用铺垫式开场、破折号尽量少。
 
-    python3 make_a4_pdf.py   →  proposal.pdf  (A4, 4 页)
+    python3 make_a4_pdf.py   →  Real-Time-Transfer-Scam-Guard-Chinese-Can-Fly.pdf  (A4, 3 页)
 """
 import base64
 import os
@@ -14,7 +14,7 @@ import subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
 OUT_HTML = HERE / "_a4.html"
-OUT_PDF = HERE / "proposal.pdf"
+OUT_PDF = HERE / "Real-Time-Transfer-Scam-Guard-Chinese-Can-Fly.pdf"
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 
