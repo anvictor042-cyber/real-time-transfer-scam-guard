@@ -213,6 +213,14 @@ class RiskEngine:
             "is_fraud": is_fraud,
         }
 
+    # ------------------------------------------------------------------ 复位
+    def reset(self):
+        """清零计数器与延迟样本，录制前用。"""
+        with self._stats_lock:
+            for k in self.counters:
+                self.counters[k] = 0.0 if k.startswith("amount_") else 0
+            self.latencies.clear()
+
     # ------------------------------------------------------------------ 统计
     def snapshot(self):
         with self._stats_lock:

@@ -30,7 +30,7 @@ explainer = Explainer()
 stream = StreamBuilder()
 pool = ThreadPoolExecutor(max_workers=1)
 
-state = {"speed": 5.0, "idx": 0, "started": None}
+state = {"speed": 5.0, "idx": 0, "started": None, "running": False}
 
 
 class Hub:
@@ -83,7 +83,8 @@ def index():
 
 @app.get("/api/health")
 def health():
-    return {"engine_ready": engine.lstm is not None,
+    return {"running": state["running"],
+            "engine_ready": engine.lstm is not None,
             "explainer_ready": explainer.ready,
             "stream_size": len(stream),
             "skipped_transactions": state.get("errors", 0),
@@ -110,11 +111,18 @@ def stats():
 
 @app.post("/api/control")
 def control(payload: dict):
+    """控制交易流：running（开始/暂停）、reset（清零重来）、speed（速度）。"""
     if "speed" in payload:
         state["speed"] = max(0.5, min(40.0, float(payload["speed"])))
-    if payload.get("restart"):
+    if payload.get("reset"):
         state["idx"] = 0
         state["started"] = None
+        state["running"] = False
+        engine.reset()
+    if "running" in payload:
+        state["running"] = bool(payload["running"])
+        if state["running"]:
+            state["started"] = time.time()
     return {"ok": True, "state": state}
 
 
@@ -124,6 +132,9 @@ async def ticker():
     shortcut: 单笔失败就跳过并计数，不做重试；要保证连续可用时改成带退避的重试。
     """
     while True:
+        if not state["running"]:
+            await asyncio.sleep(0.2)
+            continue
         try:
             if state["idx"] >= len(stream):
                 state["idx"] = 0
